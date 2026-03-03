@@ -554,3 +554,75 @@ export const getMe = async (req, res) => {
         });
     }
 };
+// @desc    Get saved addresses
+// @route   GET /api/auth/addresses
+// @access  Private
+export const getAddresses = async (req, res) => {
+    try {
+        const customer = await Customer.findById(req.customer._id).select('savedAddresses');
+        res.status(200).json({
+            success: true,
+            data: customer.savedAddresses
+        });
+    } catch (error) {
+        console.error('Get addresses error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+// @desc    Add new address
+// @route   POST /api/auth/addresses
+// @access  Private
+export const addAddress = async (req, res) => {
+    try {
+        const { name, addressLine, city, state, pincode, country, isDefault } = req.body;
+
+        const customer = await Customer.findById(req.customer._id);
+
+        const newAddress = {
+            name,
+            addressLine,
+            city,
+            state,
+            pincode,
+            country: country || 'India',
+            isDefault: isDefault || false
+        };
+
+        if (isDefault) {
+            customer.savedAddresses.forEach(addr => addr.isDefault = false);
+        }
+
+        customer.savedAddresses.push(newAddress);
+        await customer.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Address added successfully',
+            data: customer.savedAddresses
+        });
+    } catch (error) {
+        console.error('Add address error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+// @desc    Delete address
+// @route   DELETE /api/auth/addresses/:id
+// @access  Private
+export const deleteAddress = async (req, res) => {
+    try {
+        const customer = await Customer.findById(req.customer._id);
+        customer.savedAddresses = customer.savedAddresses.filter(addr => addr._id.toString() !== req.params.id);
+        await customer.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Address deleted',
+            data: customer.savedAddresses
+        });
+    } catch (error) {
+        console.error('Delete address error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};

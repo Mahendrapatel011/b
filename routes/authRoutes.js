@@ -7,7 +7,10 @@ import {
     verifyResetOTP,
     resetPassword,
     resendOTP,
-    getMe
+    getMe,
+    getAddresses,
+    addAddress,
+    deleteAddress
 } from '../controllers/authController.js';
 import { protect } from '../middleware/auth.js';
 
@@ -24,5 +27,8 @@ router.post('/resend-otp', resendOTP);
 
 // Protected routes
 router.get('/me', protect, getMe);
+router.get('/addresses', protect, getAddresses);
+router.post('/addresses', protect, addAddress);
+router.delete('/addresses/:id', protect, deleteAddress);
 
 export default router;

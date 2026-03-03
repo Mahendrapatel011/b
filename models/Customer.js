@@ -49,6 +49,15 @@ const customerSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    savedAddresses: [{
+        name: String,
+        addressLine: String,
+        city: String,
+        state: String,
+        pincode: String,
+        country: { type: String, default: 'India' },
+        isDefault: { type: Boolean, default: false }
+    }],
     profilePicture: {
         type: String, // URL or base64 string
         default: ''

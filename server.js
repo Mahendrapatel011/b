@@ -58,11 +58,15 @@ app.use('/api/profile', profileRoutes);
 // Public routes
 import publicRoutes from './routes/publicRoutes.js';
 app.use('/api/public', publicRoutes);
+import cartRoutes from './routes/cartRoutes.js';
+app.use('/api/cart', cartRoutes);
 
 // Business routes
 app.use('/api/business/auth', businessAuthRoutes);
 import testRoutes from './routes/testRoutes.js';
 app.use('/api/business/tests', testRoutes);
+import offerRoutes from './routes/offerRoutes.js';
+app.use('/api/business/offers', offerRoutes);
 
 // Admin routes
 import adminRoutes from './routes/adminRoutes.js';

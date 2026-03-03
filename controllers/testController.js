@@ -8,10 +8,13 @@ export const addTest = async (req, res) => {
     try {
         const { name, subtitle, category, subCategories, price, discount, homeCollection, preparation } = req.body;
 
-        // Handle images if uploaded
+        // Use business profile picture as default test image
+        const business = await Business.findById(req.business._id);
         let images = [];
         if (req.files && req.files.length > 0) {
             images = req.files.map(file => `/uploads/${file.filename}`);
+        } else if (business.profileImage) {
+            images = [business.profileImage];
         }
 
         const test = await Test.create({
@@ -85,17 +88,10 @@ export const updateTest = async (req, res) => {
             return res.status(401).json({ success: false, message: 'Not authorized' });
         }
 
-        // Handle new images if uploaded
-        if (req.files && req.files.length > 0) {
-            const newImages = req.files.map(file => `/uploads/${file.filename}`);
-            // If new images provided, append or replace? 
-            // Usually replace is simpler for this context, or user logic might vary.
-            // Let's assume we append if not exceeding limit, or let's just replace relevant ones.
-            // Simplified: If images sent, replace list or add to it.
-            // Requirement says "2 image bhi upload karwao".
-            // Let's just USE the new images if provided, maybe merging logic is complex.
-            // For now, let's append new ones to the array.
-            req.body.images = [...test.images, ...newImages];
+        // Image update logic removed as per requirement - test image is linked to business profile picture
+        const business = await Business.findById(req.business._id);
+        if (business && business.profileImage) {
+            req.body.images = [business.profileImage];
         }
 
         test = await Test.findByIdAndUpdate(req.params.id, req.body, {
